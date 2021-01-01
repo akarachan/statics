@@ -4,7 +4,7 @@ Theme URI: https://7b2.com/
 Author: Li Ruchun
 Author URI: https://7b2.com/
 Description: wordpress 高级商用主题，模块化管理，兼容微信的各种环境
-Version: 2.5.1
+Version: 2.6.1
 Text Domain: B2
 Tags: B2
 */
@@ -60,6 +60,7 @@ body{
 	padding:0;
 	-webkit-backface-visibility: hidden;
 	overflow-x: hidden;
+	word-break: break-all;
 }
 button.none{
 	padding:0;
@@ -217,7 +218,6 @@ pre {
 	padding: 17px;
 	font: 14px/22px courier new;
 	position: relative;
-	margin: 40px 0;
 	background-color: #f8f8f8
 }
 
@@ -245,7 +245,6 @@ img {
 	max-width: 100%;
 	height: auto;
 	object-fit: cover;
-	vertical-align: bottom;
 	image-rendering: -webkit-optimize-contrast;
 }
 button::-moz-focus-inner {
@@ -403,9 +402,6 @@ mark, ins {
 .toasted.primary.error {
     background: rgb(255, 255, 255)!important;
     color: rgb(253, 0, 0)!important;
-}
-.entry-content{
-	line-height: 30px
 }
 .link-overlay{
 	display: block;
@@ -609,4 +605,12 @@ table td {
     h1 {
         font-size: 24px;
     }
+}
+
+/*2.5.4 新增通用样式*/
+.fs12{
+	font-size: 12px;
+}
+.b2-b-t{
+	border-top: 1px solid rgb(243, 243, 243);
 }

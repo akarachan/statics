@@ -8,6 +8,10 @@ var b2CirclePostBox = new Vue({
         admin:{
             is:false
         },
+        edit:{
+            is:false,
+            topicId:0
+        },
         character:{
             length:0,
             min:0,
@@ -61,6 +65,8 @@ var b2CirclePostBox = new Vue({
             credit:0,
             money:0,
             darkRoom:false,
+            canPost:true,
+            allowPendings:1
         },
         join:{
             why:'',
@@ -142,6 +148,7 @@ var b2CirclePostBox = new Vue({
     mounted(){
         this.single.is = this.$refs.circleSingle
         this.admin.is = this.$refs.circleAdmin
+        this.edit.is = document.querySelector('.circle-topic-edit')
         if(this.single.is){
             this.circle.picked = this.$refs.circleSingle.getAttribute('data-circleId')
         }else if(this.admin.is){
@@ -177,8 +184,111 @@ var b2CirclePostBox = new Vue({
         }
 
         this.getCurrentUserCircleData()
+        
     },
     methods:{
+        getEditTopicData(){
+            this.edit.topicId = b2GetQueryVariable('topic_id')
+            this.$http.post(b2_rest_url+'getEditData','topic_id='+this.edit.topicId).then(res=>{
+                this.showPoBox = true
+                
+                this.topicType = res.data.type
+                
+                this.topicTypeBox = false
+                
+                if(!this.circle.list.hasOwnProperty(res.data.circleId)){
+                    this.$set(this.circle.list,res.data.circleId,res.data.circle)
+                }
+                
+                this.circle.picked = res.data.circleId
+                
+                this.ask.type = res.data.ask.type ? res.data.ask.type : 'someone'
+                this.ask.pay = res.data.ask.pay
+                this.ask.userList = res.data.ask.userList
+                this.ask.pickedList = res.data.ask.pickedList
+
+                this.ask.reward = res.data.ask.reward ? res.data.ask.reward : 'credit'
+                this.ask.time = res.data.ask.time
+                
+                this.vote.type = res.data.vote.type ? res.data.vote.type : 'radio'
+                for (let i = 0; i < res.data.vote.list.length; i++) {
+                    this.$set(this.vote.list,i,res.data.vote.list[i].title)
+                }
+
+                for (let i = 0; i < res.data.guess.list.length; i++) {
+                    this.$set(this.guess.list,i,res.data.guess.list[i].title)
+                }
+                this.guess.right = res.data.guess.right ? res.data.guess.right : 0
+         
+                if(res.data.video.length > 0){
+                    for (let i = 0; i < res.data.video.length; i++) {
+                        res.data.video[i]['locked'] = false
+                        res.data.video[i]['progress'] = 100
+                        res.data.video[i]['success'] = true
+                    }
+                }
+                this.video.list = res.data.video
+                this.video.indexMark = res.data.video.length
+
+                if(res.data.image.length > 0){
+                    for (let i = 0; i < res.data.image.length; i++) {
+                        res.data.image[i]['locked'] = false
+                        res.data.image[i]['progress'] = 100
+                        res.data.image[i]['success'] = true
+                    }
+                }
+                this.image.list = res.data.image
+                this.image.indexMark = res.data.image.length
+                
+                if(res.data.file.length > 0){
+                    for (let i = 0; i < res.data.file.length; i++) {
+                        res.data.file[i]['locked'] = false
+                        res.data.file[i]['progress'] = 100
+                        res.data.file[i]['success'] = true
+                    }
+                }
+                this.file.list = res.data.file
+                this.file.indexMark = res.data.file.length
+
+                if(res.data.card.length > 0){
+                    for (let i = 0; i < res.data.card.length; i++) {
+                        this.$set(this.card.list,i,{
+                            'id':res.data.card[i].id,
+                            'progress':100,
+                            'success':true,
+                            'data':res.data.card[i]
+                        })
+                    }
+                    this.card.indexMark = res.data.card.length
+                }
+
+                this.role.see = res.data.role.see
+                if(this.role.see !== 'public') this.role.show = true
+                this.role.money = res.data.role.money
+                this.role.credit = res.data.role.credit
+                this.role.lvPicked = res.data.role.lvPicked
+                this.role.currentCircle = res.data.role.currentCircle
+
+
+                this.$refs.textarea_title.value = res.data.title
+                this.$refs.textarea_box.value = res.data.content
+                
+                autosize.update(this.$refs.textarea_title)
+                autosize.update(this.$refs.textarea_box)
+
+                this.changeText()
+
+
+            }).catch(err=>{
+                this.$toasted.show(err.response.data.message, {
+                    theme: 'primary', 
+                    position: 'top-center', 
+                    duration : 4000,
+                    type:'error'
+                })
+            })
+
+        },
         getCurrentUserCircleData(){
             this.$http.post(b2_rest_url+'getCurrentUserCircleData','circle_id='+this.circle.picked).then(res=>{
                 this.defaultCircle(res.data.circles)
@@ -188,6 +298,8 @@ var b2CirclePostBox = new Vue({
                     this.join.picked = this.currentUser.currentCircleRole.data[0].type
                 }
                 this.currentUser.isAdmin = res.data.is_admin
+                this.currentUser.canPost = res.data.can_post
+                this.currentUser.allowPendings = res.data.allow_pendings
                 this.currentUser.isCircleAdmin = res.data.is_circle_admin
                 this.currentUser.inCircle = res.data.in_circle
                 this.currentUser.darkRoom = res.data.dark_room
@@ -206,6 +318,10 @@ var b2CirclePostBox = new Vue({
                 this.currentUser.topicTypeRole = res.data.topic_type_role
                 this.currentUser.readRole = res.data.read_role
                 this.$refs.poFormBox.style.opacity = 1
+
+                if(this.edit.is){
+                    this.getEditTopicData()
+                }
             })
         },
         defaultCircle(data){
@@ -581,16 +697,12 @@ var b2CirclePostBox = new Vue({
                 input:'',
                 locked:false
             }
-            this.role = {
-                show:false,
-                list:'',
-                see:'public',
-                money:'',
-                credit:'',
-                lv:[],
-                lvPicked:[],
-                currentCircle:0
-            }
+            this.role.show = false
+            this.role.see = 'public'
+            this.role.money = ''
+            this.role.credit = ''
+            this.role.lvPicked = []
+            this.role.currentCircle = 0
         },
         submitTopic(){
             if(this.locked === true) return
@@ -611,18 +723,26 @@ var b2CirclePostBox = new Vue({
                 'role':this.role
             }
 
-            this.$http.post(b2_rest_url+'insertCircleTopic',Qs.stringify(data)).then(res=>{
-                b2CircleList.data.unshift(res.data)
-                b2CircleList.$nextTick(()=>{
-                    document.querySelector('.circle-topic-item-'+res.data.topic_id).classList += ' new-topic'
-                    b2RestTimeAgo(document.querySelectorAll('.circle-topic-item-'+res.data.topic_id+' .b2timeago'))
-                    imagesLoaded( document.querySelectorAll('.circle-topic-item'), function( instance ) {
-                        b2SidebarSticky()
-                    });
-                    lazyLoadInstance.update()
-                    this.resetTopic()
+            if(this.edit.is){
+                data['topic_id'] = this.edit.topicId
+            }
 
-                })
+            this.$http.post(b2_rest_url+'insertCircleTopic',Qs.stringify(data)).then(res=>{
+                if(this.edit.is){
+                    location.href = res.data.link
+                }else{
+                    b2CircleList.data.unshift(res.data)
+                    b2CircleList.$nextTick(()=>{
+                        document.querySelector('.circle-topic-item-'+res.data.topic_id).classList += ' new-topic'
+                        b2RestTimeAgo(document.querySelectorAll('.circle-topic-item-'+res.data.topic_id+' .b2timeago'))
+                        imagesLoaded( document.querySelectorAll('.circle-topic-item'), function( instance ) {
+                            b2SidebarSticky()
+                        });
+                        lazyLoadInstance.update()
+                        this.resetTopic()
+                        this.getCurrentUserCircleData()
+                    })
+                }
                 this.locked = false
             }).catch(err=>{
                 this.$toasted.show(err.response.data.message, {
@@ -829,7 +949,7 @@ var b2CircleList = new Vue({
         }else{
             this.login = false
         }
-        if(!this.single.is){
+        if(!this.single.is && !this.admin.is){
             this.cData.picked = document.querySelector('.po-topic-textarea').getAttribute('data-circle')
             this.cData.gc = parseInt(document.querySelector('.po-topic-textarea').getAttribute('data-gc'))
         }
@@ -1072,8 +1192,12 @@ var b2CircleList = new Vue({
                     b2RestTimeAgo(document.querySelectorAll('.b2timeago'))
                     lazyLoadInstance.update()
                     b2SidebarSticky()
-                    this.showComment(0)
-                    this.resetAnswerList(0)
+                    if(res.data.data.type !== 'ask'){
+                        this.showComment(0)
+                    }else{
+                        this.resetAnswerList(0)
+                    }
+                    
                 })
                
             })
@@ -1141,6 +1265,45 @@ var b2CircleList = new Vue({
                 this.video.action = true
             }
         },
+        getVideoPoster(v,ti,index){
+            const p = new Promise(function (resolve, reject) {
+                let dataURL = '';
+                let video = document.createElement("video");
+                video.setAttribute('crossOrigin', 'anonymous');//处理跨域
+                video.currentTime = 1
+                video.setAttribute('src', v.link);
+                video.setAttribute('width', 400);
+                video.setAttribute('height', 240);
+                video.addEventListener('loadeddata', function () {
+                    let canvas = document.createElement("canvas"),
+                        width = video.width, //canvas的尺寸和图片一样
+                        height = video.height;
+                    canvas.width = width;
+                    canvas.height = height;
+                    canvas.getContext("2d").drawImage(video, 0, 0, width, height); //绘制canvas
+                    dataURL = canvas.toDataURL('image/jpeg'); //转换为base64
+                    resolve(dataURL);
+                });
+            })
+
+            p.then((i)=>{
+                this.$set(this.data[ti].attachment.video[index],'poster',URL.createObjectURL(this.base64ToBlob(i)))
+            })
+            
+        },
+        base64ToBlob(code) {
+            var parts = code.split(';base64,');
+            var contentType = parts[0].split(':')[1];
+            var raw = window.atob(parts[1]);
+            var rawLength = raw.length;
+
+            var uInt8Array = new Uint8Array(rawLength);
+
+            for (var i = 0; i < rawLength; ++i) {
+                uInt8Array[i] = raw.charCodeAt(i);
+            }
+            return new Blob([uInt8Array], {type: contentType});
+        },
         watchVideo(video,id,index){
             video.addEventListener('ended', function () {  
                 this.style.display = 'none';
@@ -1175,10 +1338,9 @@ var b2CircleList = new Vue({
 
             return usersHTML
         },
-        fliterContent(content,ti){
+        fliterContent(content,ti,item){
             
             if(!this.data[ti].full_content && !this.single.is){
-                content = content.replace(/\s*/g,"")
                 let length = parseInt(content.length)
                 if(length > 100){
                     if(length/3 > 100){
@@ -1187,12 +1349,15 @@ var b2CircleList = new Vue({
                         length = length/3
                     }
                     content = content.substring(0,length)+'...&nbsp;&nbsp; <button class="text" onclick="b2CircleList.showFullContent('+ti+')">阅读更多<i class="b2font b2-jt-down"></i></button>'
-                    return '<p>' + content + '</p>'
+                    return '<p><a href="'+item.link+'" target="_blank" class="link-block"></a>' + content + '</p>'
                 }
             }
 
             content = this.autoLink(content)
 
+            if(!this.single.is){
+                return '<p><a href="'+item.link+'" target="_blank" class="link-block"></a>' + content.replace(/\n*$/g, '').replace(/\n/g, '</p><p>') + '</p>'
+            }
             return '<p>' + content.replace(/\n*$/g, '').replace(/\n/g, '</p><p>') + '</p>'
         },
         autoLink(text){
@@ -1752,7 +1917,6 @@ var b2CircleList = new Vue({
         fliterAnswer(content,ai){
 
             if(!this.answer.list[ai].full_answer){
-                content = content.replace(/\s*/g,"")
                 let length = parseInt(content.length)
                 if(length > 100){
                     if(length/3 > 100){
@@ -1872,7 +2036,7 @@ var b2CircleList = new Vue({
                     this.getAnswerList(ti)
                 })
                 
-            }else{
+            }else if(!this.admin.is){
                 document.querySelector('#topic-answer').appendChild(this.$refs.answerBox)
                 this.answer.listParent = ''
                 this.answer.list = ''
@@ -2130,13 +2294,13 @@ var b2CircleList = new Vue({
 
             if(ratio >= 360 || ratio <= -360) {
                 ratio = 0
-                box.querySelector('.box-in > img').style.transform = 'none'
+                box.querySelector('.box-in > picture img').style.transform = 'none'
             }else{
-                box.querySelector('.box-in > img').style.transform = 'rotate('+ratio+'deg) '+this.reTransform(ratio)
+                box.querySelector('.box-in > picture img').style.transform = 'rotate('+ratio+'deg) '+this.reTransform(ratio)
             }
 
-            box.querySelector('.box-in > img').style.width = _w+'px'
-            box.querySelector('.box-in > img').style.height = _h+'px'
+            box.querySelector('.box-in > picture img').style.width = _w+'px'
+            box.querySelector('.box-in > picture img').style.height = _h+'px'
         },
         reTransform(ratio){
             if(ratio == 90){
@@ -2426,7 +2590,8 @@ var b2AllUsers = new Vue({
         opt:{
             paged:1,
             circleId:0
-        }
+        },
+        canEdit:false
     },
     mounted(){
         if(!this.$refs.allUsers) return
@@ -2477,12 +2642,27 @@ var b2AllUsers = new Vue({
         },
         getList(){
             this.$http.post(b2_rest_url+'getCircleUserList','circleId='+this.opt.circleId+'&paged='+this.opt.paged).then(res=>{
+                this.canEdit = res.data.is_admin
                 this.list = res.data
                 this.opt.pages = res.data.pages
                 for (let i = 0; i < this.list.list.length; i++) {
                     this.ids.push(this.list.list[i].id)
                 }
                 this.checkFollowByids()
+            })
+        },
+        remove(id){
+            this.$http.post(b2_rest_url+'removeUserFormCircle','user_id='+id+'&circle_id='+this.opt.circleId).then(res=>{
+                if(res.data == 1){
+                    this.getList()
+                }
+            }).catch(err=>{
+                this.$toasted.show(err.response.data.message, {
+                    theme: 'primary', 
+                    position: 'top-center', 
+                    duration : 4000,
+                    type:'error'
+                })
             })
         },
         checkUser(id){

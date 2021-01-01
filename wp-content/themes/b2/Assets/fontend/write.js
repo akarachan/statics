@@ -49,9 +49,9 @@
                 this.cat = parseInt(b2_write_data.cats_default)
                 this.collection = parseInt(b2_write_data.collections_default)
             }
-            Vue.nextTick(()=>{
-                autosize(this.$refs.writeTitle);
-            })
+            
+            autosize.update(this.$refs.writeTitle);
+            
         },
         methods:{
             // addThumb(event){
@@ -603,7 +603,7 @@
             
                 this.excerpt = b2_write_data.edit_excerpt
     
-                this.role = b2_write_data.edit_roles
+                this.role = b2_write_data.edit_roles ? b2_write_data.edit_roles : []
             }    
         },
         methods:{

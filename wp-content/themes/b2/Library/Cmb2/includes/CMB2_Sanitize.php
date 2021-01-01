@@ -258,11 +258,11 @@ class CMB2_Sanitize {
 		if ( is_array( $this->value ) ) {
 			foreach ( $this->value as $key => $val ) {
 				if ( $val ) {
-					$this->value[ $key ] = sprintf("%.2f",(float)$val);
+					$this->value[ $key ] = number_format_i18n( (float) str_ireplace( $search, $replace, $val ), 2 );
 				}
 			}
 		} else {
-			$this->value = sprintf("%.2f", (float)$this->value);
+			$this->value = number_format_i18n( (float) str_ireplace( $search, $replace, $this->value ), 2 );
 		}
 
 		return $this->value;

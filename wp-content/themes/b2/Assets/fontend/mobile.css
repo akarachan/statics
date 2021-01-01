@@ -26,28 +26,28 @@
     }
     .site-content{
         margin:0 6px;
-        padding-bottom:8px;
+        padding-bottom:10px;
     }
     .mg-b{
-        margin-bottom:8px
+        margin-bottom:10px
     }
     .mg-t{
-        margin-top:8px
+        margin-top:10px
     }
     .mg-t-{
         margin-top:-10px
     }
     .mg-l{
-        margin-left:8px;
+        margin-left:10px;
     }
     .mg-r{
-        margin-right:8px
+        margin-right:10px
     }
     .b2-mg{
-        margin:8px
+        margin:10px
     }
     .b2-padding,.b2-pd{
-        padding:8px
+        padding:10px
     }
     .modal-content{
         margin-top:0;
@@ -85,23 +85,11 @@
         margin-bottom:8px;
         padding: 10px 10px 0;
     }
-    .home-row-left .modules-title-box{
-        padding:10px 8px 10px
-    }
-    .home-row-left .flickity-page-dots{
+    .flickity-page-dots{
         display: none;
     }
-    .flickity-prev-next-button .flickity-button-icon{
-        width:16px;
-        height:10px
-    }
-    .flickity-prev-next-button{
-        width:16px;
-        height:10px
-    }
-    .flickity-prev-next-button .flickity-button-icon{
-        left:0;
-        top:29%
+    .post-list-cats{
+        padding:10px
     }
     .post-list-cats button .flickity-button-icon{
         top:29%
@@ -110,14 +98,16 @@
         display: block;
         margin-top:3px
     }
+    .post-3-li-dubble .post-modules-top{
+        margin-bottom:10px;
+    }
     .post-info span{
         font-size: 10px;
     }
-    .post-3 .post-list-meta li+li{
-        margin:0
-    }
     .post-list-meta-box{
-        display: none;
+        flex-flow: column;
+        align-items: flex-start;
+        margin:10px;
     }
     .post-list-meta{
         font-size: 10px;
@@ -260,7 +250,7 @@
     }
     .change-theme button {
         background:#f5f5f5;
-        margin-right:14px
+        margin-right:14px;
     }
     .change-theme > div:first-child{
         display: none;
@@ -291,9 +281,6 @@
     .social-top .top-submit{
         display: none;
     }
-    .collection-next-button{
-        display: none;
-    }
     .social-top .mobile-box .header-logo{
         margin-left:44px;
         margin-top:0
@@ -308,14 +295,17 @@
     /*下载*/
     .download-item{
         flex-flow: column;
-        margin:0 -12px
     }
     .download-thumb{
         width:100%;
         opacity: .2;
     }
     .download-rights{
-        width:100%
+        width:100%;
+        padding:10px
+    }
+    .entry-content .download-box h2{
+        margin-top:0
     }
     .download-info{
         padding:10px
@@ -394,6 +384,9 @@
     .post-style-2 .social-top .header-banner{
         background: none;
     }
+    .post-style-2 .social-top .change-theme button{
+        color:#999
+    }
     .logo-top .site-header{
         height:77px
     }
@@ -463,7 +456,7 @@
         margin:0
     }
     .login-button .b2-user{
-        font-size: 27px;
+        font-size: 29px;
         line-height: 1;
         margin:0!important;
         color:#333
@@ -981,17 +974,11 @@
     .home_row{
         padding:0px;
         margin:0px;
-        background: none;
+        background: none!important;
         margin-bottom:10px
     }
     .slider-info:after{
         display: none;
-    }
-    .flickity-prev-next-button.previous{
-        left:10px
-    }
-    .flickity-prev-next-button.next{
-        right:10px
     }
     .slider-1 .slider-info-box{
         padding: 16px 16px;
@@ -1051,7 +1038,6 @@
         margin-bottom:0
     }
     .collection-out>ul{
-        margin-right:0;
         overflow-x: scroll;
         -webkit-overflow-scrolling: touch;
     }
@@ -1063,7 +1049,7 @@
         padding: 3px 19px;
     }
     .collection-number.ar {
-        left: -1px;
+        left: 0px;
         top: 26px;
     }
     .collection-list-top .content-area h1{
@@ -1106,19 +1092,9 @@
         font-size: 10px;
     }
     /*列表*/
-    .post-2 ul.b2_gap>li{
-        padding:4px
-    }
-    .post-2 ul.b2_gap .item-in{
-        margin:4px;
-    }
     .post-modules-top{
         flex-flow: column;
         padding-bottom:0
-    }
-    .post-list-cats{
-        width:100%;
-        padding:8px!important
     }
     .post-list-cats a{
         font-size: 12px;
@@ -1129,23 +1105,32 @@
     .modules-title-box{
         flex-flow: wrap;
         align-items: center;
-        padding: 0;
+        padding:10px 8px 10px
     }
-    .shop-list-item h2{
-        margin:8px 0;
-        font-size: 16px;
+    .related-posts .related-posts-item{
+        padding:8px
     }
     .item-post-style-3 .post-info{
         padding:5px 8px
     }
-    .item-in{
-        margin:8px
+    .b2_gap, .shop-normal-list,.shop-category,.user-search-list{
+        margin-right:-10px;
+        margin-bottom:-10px
+    }
+    .b2_gap>li .item-in, .shop-list-item, .shop-normal-item-in,.user-search-list li > div,.home-collection .home-collection-content,.post-3.post-3-li-dubble .b2_gap>li .item-in {
+        margin-bottom: 10px;
+        margin-right: 10px;
+    }
+    .post-3-li-dubble .b2_gap{
+        margin-right:-10px
     }
     .post-list .module-title,.shop-box-title .module-title{
         font-size: 18px;
     }
-    .post-style-2 .post-list-cat{
-        left:0
+    .post-list-meta li span, .post-meta li span{
+        height: 15px;
+        line-height: 15px;
+        font-size: 10px;
     }
     .post-style-2 .single-article h1{
         margin-bottom:0
@@ -1158,10 +1143,6 @@
         max-width: 60%;
         text-align: left;
     }
-    .post-list-cat{
-        top:10px;
-        left:10px
-    }
     .mobile-hidden.widget{
         display: none
     }
@@ -1173,8 +1154,10 @@
     }
     .post-excerpt{
         font-size: 12px;
-        height:33px;
-        margin:6px 0 10px
+        margin:0 10px 10px
+    }
+    .list-footer{
+        padding:10px
     }
     .post-3 ul.b2_gap li.post-3-li{
         width:100%!important;
@@ -1184,7 +1167,15 @@
     }
     .post-3 ul.b2_gap li.post-3-li .post-module-thumb{
         margin:0;
-        width:100px;
+    }
+    .post-3 .item-in{
+        padding:10px
+    }
+    .post-3 .post-module-thumb{
+        left:10px
+    }
+    .post-3 .post-module-thumb{
+        height: calc(100% - 20px);
     }
     .post-3 .post-module-thumb a{
         height:100%
@@ -1194,26 +1185,25 @@
     }
     .post-3 .post-info h2{
         font-size: 15px;
-        height:40px;
         font-weight: 500;
         -webkit-line-clamp: 2;
-        margin-bottom:0
+        margin-bottom:5px
     }
     .post-info h2{
         -webkit-line-clamp: 2;
         line-height: 1.3;
         height:40px;
         font-size: 16px;
-    }
-    .post-3 .item-in{
-        margin:8px
+        margin: 10px;
     }
     .post-3 .post-list-cat{
         margin-bottom:0
     }
+    .post-3.post-3-li-dubble .post-info{
+        padding:10px
+    }
     .post-3 .post-info{
-        padding: 0 0 0 10px;
-        width:67%
+        padding:0 0 0 6px
     }
     .post-3.post-list .post-list-cat a{
         font-size: 10px;
@@ -1223,23 +1213,13 @@
         width:100%!important
     }
     .post-5 .item-in{
-        margin:12px
+        margin:0
     }
     .slider-user{
         display: none;
     }
     .post-list-meta li:nth-child(1){
         margin:0
-    }
-    .post-list-meta-comment,.post-list-meta-views,.post-list-meta-like{
-        padding-left:5px
-    }
-    .post-list .post-list-cat a{
-        font-size: 10px;
-        margin-right:5px;
-        height:16px;
-        line-height: 17px;
-        padding:0 3px;
     }
     .post-meta-right button{
         padding:5px 10px;
@@ -1259,9 +1239,6 @@
     }
     .home-collection ul li{
         width:46%!important
-    }
-    .home-collection .home-collection-content{
-        margin:8px
     }
     .home-collection-2 ul li{
         width:70%;
@@ -1319,23 +1296,6 @@
     .shop-box-title a{
         font-size: 14px;
     }
-    .shop-slider-in{
-        width:100%
-    }
-    .shop-slider-right{
-        width:100%;
-        padding-top:18%!important
-    }
-    .shop-slider-right-in{
-        margin-right:-5px;
-        width: auto;
-    }
-    .shop-slider-right-in>div{
-        width:25%;
-        border-bottom-width:0;
-        height:auto;
-        border-right: 5px solid rgba(255,255,255,0)!important;
-    }
     .shop-box-row{
         flex-flow: column;
         margin-bottom:0
@@ -1361,19 +1321,14 @@
         width:100%
     }
     .shop-box-list li,.shop-box-none-coupon .shop-box-list li{
-        max-width:50%!important
-    }
-    .shop-list-item{
-        margin:8px
+        max-width:50%!important;
+        width:100%!important
     }
     .shop-cats .shop-cats-item{
         width: 64px!important;
         min-width:64px!important;
         height: 46px!important;
-        margin-right:4px!important
-    }
-    .wrapper.shop-cats{
-        margin:4px
+        margin-right:8px!important
     }
     .shop-slider-box .flickity-page-dots{
         display: none;
@@ -1387,17 +1342,11 @@
     .category.single-sidebar-show{
         margin-top:0
     }
-    .shop-normal-item-in{
-        margin:8px
-    }
     .shop-normal-item-count{
-        padding:0;
-        margin:4px 0;
-        padding-top:5px
+        padding:8px
     }
-    .shop-box-price{
-        margin: 0 -8px;
-        padding: 5px 8px;
+    .shop-exchange-item-info .total-rodia{
+        margin: 10px 8px 0;
     }
     .shop-box .shop-normal-item-count b{
         display: inline;
@@ -1409,7 +1358,7 @@
         text-align: left!important;
     }
     .shop-type-normal-title{
-        font-size: 16px;
+        font-size: 14px;
         padding:13px 8px
     }
     .shop-normal-item-right button{
@@ -1446,6 +1395,12 @@
         height:100%;
         left:0;
         top:0
+    }
+    .shop-title{
+        margin:8px
+    }
+    .shop-normal-item-price{
+        margin:16px 8px 8px
     }
     .post-pre-next-jt i{
         line-height: 23px;
@@ -1569,10 +1524,6 @@
     }
     .shop-slider-in{
         border-right:0;
-        border-bottom:4px solid rgba(255,255,255,0)
-    }
-    .shop-slider-in{
-        padding-top:60%!important
     }
     /*遮照层*/
     .m-open .header-banner{
@@ -1825,6 +1776,7 @@
         width: 100%;
         padding: 15px;
         margin: 16px;
+        max-height:100%
     }
     .file-down-pass code{
         font-size: 12px
@@ -2073,7 +2025,7 @@
         margin:0
     }
     .post-list-cat{
-        margin-bottom: 0;
+        margin-bottom: 7px;
     }
     .post-style-5-video-box{
         width:auto
@@ -2085,7 +2037,11 @@
         width:100%!important;
         margin:0!important;
         border-bottom: 1px solid #f3f3f3;
-        -webkit-overflow-scrolling:touch
+        -webkit-overflow-scrolling:touch;
+        height:auto!important
+    }
+    .single .content-area, .page .content-area{
+        max-width:100%
     }
     .post-video-list ul{
         width:100%;
@@ -2096,6 +2052,7 @@
         color: initial;
         padding-top:6px;
         -webkit-overflow-scrolling: touch;
+        align-items: flex-end;
     }
     .post-video-list ul::-webkit-scrollbar { width: 0 !important;display: none; }
     .post-video-list ul li{
@@ -2110,24 +2067,60 @@
         overflow: hidden;
         display: flex;
         align-items: center;
+        padding-left:20px
     }
     .dplayer-logo{
         width:60px;
         max-width: 60px;
+    }
+    .video-list-play-icon {
+        left: 7px;
+        top: 18px;
+    }
+    .post-video-list-title{
+        display: none;
+    }
+    .post-style-5 header{
+        padding:10px;
+        margin-bottom:10px
+    }
+    .post-video-table ul{
+        margin:0;
+        padding:10px 20px
+    }
+    .post-video-table ul li{
+        padding-bottom:0
+    }
+    .post-style-5 .widget-area, .post-style-5 .content-area{
+        margin-top:8px
+    }
+    .post-style-5 header h1{
+        font-size: 18px;
+        margin-bottom:10px
     }
     .video-list-title span{
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
     }
-    .post-video-list ul li > div{
+    .post-video-list ul li .post-video-list-link{
         font-size: 12px;
         padding:10px;
         border:1px solid #f3f3f3;
         width:100%;
-        margin-bottom:0
+        margin-bottom:0;
+        color: inherit;
+    }
+    .post-video-list li > div{
+        color:initial
     }
     .post-video-list li:hover, .post-video-list li.picked{
+        background: none;
+    }
+    .post-video-list li.picked .video-list-title span,.post-video-list li:hover .video-list-title span{
+        color:inherit
+    }
+    .post-video-list li:hover .post-video-list-link,.post-video-list li.picked .post-video-list-link{
         background: none;
     }
     .video-role-title{
@@ -2156,9 +2149,6 @@
     }
     ul.b2_gap>li{
         width:50%!important
-    }
-    .post-video-list-img{
-        display: none;
     }
     .author-page .news-item{
         padding:8px
@@ -2748,6 +2738,12 @@
     }
     .b2-light-dark{
         overflow: inherit;
+    }
+    .is-weixin .login-qq{
+        display: none;
+    }
+    .is-weixin .login-weibo{
+        display: none;
     }
     @-webkit-keyframes animate-line-1 {
         0% {

@@ -2,6 +2,19 @@ var lazyLoadInstance = new LazyLoad({
     elements_selector: ".entry-content img"
 });
 
+window.onload = function(){
+    if(!document.querySelector('#prettify-js')) return
+	let classArr =  document.getElementsByTagName('pre');//替换标签class
+	if(typeof(classArr)=="object"){		
+		for(var i = 0;i < classArr.length;i++){			
+			if(classArr[i].className.indexOf('prettyprint') <= -1){
+				classArr[i].className = "prettyprint linenums";		
+			}
+		}
+	}
+	prettyPrint();
+};
+
 var b2SingleMeta = new Vue({
     el:'#post-meta',
     data:{
@@ -66,12 +79,17 @@ var postType5 = new Vue({
         index:0,
         show:true,
         title:'',
-        showViews:false
+        showViews:false,
+        url:''
     },
     mounted(){
         if(!this.$refs.postType5) return
         let post_id = this.$refs.postType5.getAttribute('data-id')
-        this.$http.post(b2_rest_url+'getPostVideos','post_id='+post_id).then(res=>{
+        let order_id = JSON.parse(localStorage.getItem('b2_guest_buy_'+post_id+'_v'));
+        if(order_id){
+            order_id = order_id[0]['order_id']
+        }
+        this.$http.post(b2_rest_url+'getPostVideos','post_id='+post_id+'&order_id='+order_id).then(res=>{
             this.videos = res.data.videos
             if(this.videos.length <= 1){
                 this.$refs.videoList.style.display = 'none'
@@ -83,12 +101,12 @@ var postType5 = new Vue({
             this.list = res.data.list
             this.title = res.data.title
             if(this.videos.length > 0){
-                let url = ''
+
                 if(this.user.allow){
-                    url = this.videos[0].url
+                    this.url = this.videos[0].url
                 }else{
-                    url = this.videos[0].view
-                    if(url){
+                    this.url = this.videos[0].view
+                    if(this.url){
                         this.showViews = true
                     }else{
                         this.showViews = false
@@ -99,17 +117,20 @@ var postType5 = new Vue({
                     container: document.getElementById('post-style-5-player'),
                     screenshot: false,
                     video: {
-                        url: url,
+                        url: this.url,
                         pic: this.videos[0].poster,
-                        type:'auto'
+                        type:'auto',
                     },
+                    contextmenu:[],
                     airplay:true,
                     mutex:true,
                     hotkey:true,
                     preload:res.data.auto === '1' ? 'auto' : 'none',
                     logo:b2_global.default_video_logo,
-                    autoplay:res.data.auto && url ? true : false
+                    autoplay:res.data.auto && this.url ? true : false
                 })
+
+                document.querySelector('.post-video-list').style.height = document.querySelector('.post-style-5-video-box').clientHeight+'px'
 
                 if(this.videos.length > 1){
                     //视频播放结束，切换下一条
@@ -120,30 +141,29 @@ var postType5 = new Vue({
                         }
                     })
 
-                    this.player.on('play',()=>{
+                    this.player.on('playing',()=>{
                         document.getElementById('post-style-5-player').querySelectorAll('.dplayer-video-current')[0].style="object-fit:contain"
                     })
 
-                    this.player.on('canplay', ()=>{
+                    // this.player.on('canplay', ()=>{
 
-                    });
+                    // });
                 }
             }
-
             b2playerInit()
         })
     },
     methods:{
         select(index){
             this.index = index
-            let url
+            document.getElementById('post-style-5-player').querySelectorAll('.dplayer-video-current')[0].style="object-fit:cover"
             if(this.user.allow){
-                url = this.videos[index].url
+                this.url = this.videos[index].url
             }else{
-                url = this.videos[index].view
+                this.url = this.videos[index].view
             }
             this.player.switchVideo({
-                url:url,
+                url:this.url,
                 pic:this.videos[index].poster
             })
 
@@ -175,19 +195,14 @@ var postType5 = new Vue({
             this.player.play()
         },
         pay(){
-            let userData = userTools.userData
-            if(!userData.user_link){
-                login.show = true
-            }else{
-                b2DsBox.data = {
-                    'title':this.title,
-                    'order_price':this.user.role.value,
-                    'order_type':'v',
-                    'post_id':b2_global.post_id
-                }
-                b2DsBox.show = true;
-                b2DsBox.showtype = 'normal'
+            b2DsBox.data = {
+                'title':this.title,
+                'order_price':this.user.role.value,
+                'order_type':'v',
+                'post_id':b2_global.post_id
             }
+            b2DsBox.show = true;
+            b2DsBox.showtype = 'normal'
         },
         credit(){
             let userData = userTools.userData
@@ -271,7 +286,7 @@ function b2ImgZooming(sele){
         
     }
 
-    var img2 = document.querySelectorAll('figure img')
+    var img2 = document.querySelectorAll('.entry-content figure img')
     for (let i = 0; i < img2.length; i++) {
         b2zoom.listen(img2[i]);
     }
@@ -320,7 +335,11 @@ function showHideContent(){
             h_axios.defaults.headers.common['Authorization'] = 'Bearer ' + userData.token
         }
 
-        h_axios.post(b2_rest_url+'getHiddenContent','&id='+b2_global.post_id).then((res)=>{
+        let order_id = JSON.parse(localStorage.getItem('b2_guest_buy_'+b2_global.post_id+'_w'));
+            if(order_id){
+                order_id = order_id[0]['order_id']
+            }
+        h_axios.post(b2_rest_url+'getHiddenContent','id='+b2_global.post_id+'&order_id='+order_id).then((res)=>{
 
             if(res.status == 200){
                 for (let i = 0; i < box.length; i++) {
@@ -340,11 +359,10 @@ function showHideContent(){
                     box[i].style.minHeight = 'auto'
 
                     Vue.nextTick(()=>{
-                        PR.prettyPrint();
+                        prettyPrint()
+                        b2VideoReset()
+                        b2WidgetImageLoaded()
                     })
-                    
-                    b2VideoReset()
-                    b2WidgetImageLoaded()
                 }
             }
 
@@ -416,9 +434,11 @@ Vue.component('poster-box', {
                 this.logo = res.data;
                 this.$http.post(b2_rest_url+'urlToBase64','url='+this.data.thumb).then(res=>{
                     this.thumb = res.data;
-                    setTimeout(()=>{
-                        this.html2canvas()
-                    }, 0);
+                    this.$nextTick(()=>{
+                        setTimeout(()=>{
+                            this.html2canvas()
+                        }, 100);
+                    })
                 });
             });
         },
@@ -442,7 +462,7 @@ Vue.component('poster-box', {
                     //this.poster = canvas.toDataURL();
                     //console.log(imgData)
                     //this.poster = canvas.convertToJPEG(canvas, canvas.width, canvas.height);
-                    this.poster = URL.createObjectURL(this.base64ToBlob(canvas.toDataURL()))
+                    this.poster = canvas.toDataURL()
                 }
             });
         },
@@ -463,7 +483,7 @@ Vue.component('poster-box', {
     watch:{
         show(val){
             if(val && !this.loadedjs){
-                b2loadScript(b2_global.site_info.site_uri+'/Assets/fontend/library/html2canvas.min.js',()=>{
+                b2loadScript(b2_global.site_info.site_uri+'/Assets/fontend/library/html2canvas.min.js','',()=>{
                     this.loadedjs = true
                     this.getbase64()
                 })
@@ -482,6 +502,30 @@ var posterBox = new Vue({
         close(val){
             this.show = val
         }
+    }
+})
+
+var postVideoTable = new Vue({
+    el:'.post-video-table',
+    data:{
+        table:'content'
+    },
+    methods:{
+        tab(type){
+            this.table = type
+        }
+    },
+    watch:{
+       table(val){
+            b2SidebarSticky()
+            if(val === 'comment'){
+                document.querySelector('.single-article').style.display = 'none'
+                document.querySelector('.comments-box').style.display = 'block'
+            }else{
+                document.querySelector('.single-article').style.display = 'block'
+                document.querySelector('.comments-box').style.display = 'none'
+            }
+       }
     }
 })
 
@@ -624,6 +668,7 @@ var b2Comment = new Vue({
                     'email':this.data.user_email,
                     'avatar':this.data.avatar
                 }
+                this.show.info = true
             }else{
                 this.userData = {
                     'nickname':userData.user_display_name,
@@ -894,7 +939,14 @@ var b2DownloadBox = new Vue({
     },
     methods:{
         getList(){
-            this.$http.post(b2_rest_url+'getDownloadData','post_id='+b2_global.post_id).then(res=>{
+            let guest = JSON.parse(localStorage.getItem('b2_guest_buy_'+b2_global.post_id+'_x'));
+
+            let data = {
+                'post_id':b2_global.post_id,
+                'guest':guest
+            }
+
+            this.$http.post(b2_rest_url+'getDownloadData',Qs.stringify(data)).then(res=>{
                 this.list = res.data
                 let show = false
 
@@ -912,35 +964,63 @@ var b2DownloadBox = new Vue({
         login(){
             login.show = true
         },
-        go(link,allow){
-            if(!this.cLogin && !allow){
-                login.show = true
-            }else if(!allow){
-                this.$toasted.show('没有权限下载', {
+        go(link,allow,item,index){
+
+            if(item.current_user.lv.lv.lv === 'dark_room'){
+                this.$toasted.show(b2_global.js_text.global.dark_room_down, {
                     theme: 'primary', 
                     position: 'top-center', 
                     duration : 4000,
                     type:'error'
                 })
+
+                return
+            }
+
+            if(!this.cLogin && !allow && !item.current_user.guest){
+                login.show = true
+            }else if(!allow){
+                if(item.current_user.can.type == 'comment'){
+                    this.$toasted.show(b2_global.js_text.global.comment_down, {
+                        theme: 'primary', 
+                        position: 'top-center', 
+                        duration : 4000,
+                        type:'error'
+                    })
+                }else if(item.current_user.can.type == 'credit'){
+                    this.credit(index)
+                }else if(item.current_user.can.type == 'money'){
+                    this.pay(index)
+                }else{
+                    this.$toasted.show(b2_global.js_text.global.role_down, {
+                        theme: 'primary', 
+                        position: 'top-center', 
+                        duration : 4000,
+                        type:'error'
+                    })
+                }
+                return 
+                // this.$toasted.show('没有权限下载', {
+                //     theme: 'primary', 
+                //     position: 'top-center', 
+                //     duration : 4000,
+                //     type:'error'
+                // })
             }else{
                 window.open(link)
             }
         },
         pay(index){
-            if(!this.cLogin){
-                login.show = true
-            }else{
-                if(this.list[index].current_user.can.type == 'money'){
-                    b2DsBox.data = {
-                        'title':this.list[index].name,
-                        'order_price':this.list[index].current_user.can.value,
-                        'order_type':'x',
-                        'post_id':b2_global.post_id,
-                        'order_key':index
-                    }
-                    b2DsBox.show = true;
-                    b2DsBox.showtype = 'normal'
+            if(this.list[index].current_user.can.type == 'money'){
+                b2DsBox.data = {
+                    'title':this.list[index].name,
+                    'order_price':this.list[index].current_user.can.value,
+                    'order_type':'x',
+                    'post_id':b2_global.post_id,
+                    'order_key':index
                 }
+                b2DsBox.show = true;
+                b2DsBox.showtype = 'normal'
             }
         },
         credit(index){
@@ -1008,9 +1088,10 @@ if(typeof b2SingleMeta !== 'undefined'){
     })
 }
 
-function b2loadScript(url, callback){
+function b2loadScript(url, id,callback){
     var script = document.createElement ("script")
     script.type = "text/javascript";
+    script.id = id;
     if (script.readyState){ //IE
         script.onreadystatechange = function(){
             if (script.readyState == "loaded" || script.readyState == "complete"){

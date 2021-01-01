@@ -1,6 +1,5 @@
 .shop-slider-in{
     position: relative;
-    border-right:8px solid rgba(255, 255, 255, 0)
 }
 .shop-slider{
     display: flex;
@@ -18,7 +17,7 @@
     height:100%
 }
 .shop-slider-in{
-    width:50%;
+    width:100%;
     position: relative;
 }
 .shop-slider-info{
@@ -31,35 +30,6 @@
     height:100%;
     left:0;
     top:0
-}
-.shop-slider-right{
-    display: flex;
-    flex-flow: wrap;
-    width:50%;
-    position: relative;
-}
-.shop-slider-right-in{
-    height:100%;
-    position: absolute;
-    left:0;
-    top:0;
-    display: flex;
-    flex-flow: wrap;
-    overflow: hidden;
-    align-items:stretch;
-    margin-right:-8px;
-    width:100%
-}
-.shop-slider-right-in > div{
-    width:50%;
-    height:51%;
-    position: relative;
-    overflow: hidden;
-    
-    border-bottom:8px solid rgba(255, 255, 255, 0)
-}
-.shop-slider-right-in .shop-slider-2,.shop-slider-right-in .shop-slider-0{
-    border-right:8px solid rgba(255, 255, 255, 0);
 }
 .shop-slider-info{
     padding:20px;
@@ -122,15 +92,28 @@
     width:100%;
     overflow: hidden;
 }
+.shop-cats{
+    position: relative;
+}
 .shop-cats-in{
     display: block;
 }
 .shop-cats img{
     display: block;
-    width:100px;
-    height:100px;
     /* filter: blur(2px);
     -webkit-filter: blur(2px); */
+}
+.shop-cat-button{
+    position: absolute;
+    width: 30px;
+    top: 50%;
+    margin-top: -15px;
+}
+.shop-next{
+    right:-36px
+}
+.shop-previous{
+    left:-36px
 }
 .shop-cats .shop-cats-item{
     display: inline-block;
@@ -174,12 +157,6 @@
     margin-top:-21px;
     color:#ccc
 }
-.shop-cats .flickity-prev-next-button.previous {
-    left: -44px;
-}
-.shop-cats .flickity-prev-next-button.next {
-    right: -44px;
-}
 .shop-home-box{
     display: flex;
 }
@@ -194,8 +171,6 @@
 }
 .shop-normal-item{
     width:33.3333%;
-    border-right: 1px solid #f3f3f3;
-    border-bottom: 1px solid #f3f3f3;
 }
 .shop-normal-item-in{
     position: relative;
@@ -207,7 +182,6 @@
 .shop-normal-list .hidden-line{
     display: flex;
     flex-flow: wrap;
-    margin-right:-2px
 }
 .shop-normal-item-img{
     height:0;
@@ -226,8 +200,9 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
-    font-size: 15px;
+    font-size: 17px;
     height: 42px;
+    margin:16px
 }
 .shop-title:hover{
     text-decoration: underline;
@@ -237,10 +212,11 @@
     margin-top:10px;
     justify-content: space-between;
     align-items: center;
-    height:44px
+    height:44px;
+    margin:0 16px
 }
 .shop-normal-item-price span{
-    font-size: 12px;
+    font-size: 16px;
 }
 .shop-item-d-price.shop-item-delete{
     display: none;
@@ -262,18 +238,12 @@
     color: #f44336;
     font-size: 20px;
 }
-.shop-normal-item-count{
-    color:#ccc
-}
 .shop-normal-item-count b{
     font-weight: normal;
 }
-.shop-normal-item-info{
-    padding-top:10px
-}
 .shop-normal-item-count {
     display: flex;
-    margin-top:10px
+    color:#ccc
 }
 .shop-normal-item-count span{
     font-size: 12px;
@@ -289,17 +259,21 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 16px;
+    font-size: 17px;
     padding: 16px;
-    border-bottom: 1px solid #f3f3f3;
     line-height: 1;
+}
+.shop-type-normal-title h2 i{
+    font-size: 20px;
+    font-weight: normal;
+    opacity: .5;
+    margin-right: 10px;
 }
 .shop-type-normal-title a{
     font-size: 12px;
 }
 .total-rodia {
     position: relative;
-    width:100%;
     background-color: #f0f0f0;
     height:3px;
     margin-top:10px
@@ -355,8 +329,8 @@
     padding:20px
 }
 .shop-single-img-box{
-    width:300px;
-    height:300px;
+    width:400px;
+    height:400px;
     position: relative;
     overflow: hidden;
     border: 1px solid #f5f5f5;
@@ -450,6 +424,7 @@
     border:0;
     margin-bottom:10px;
     position: relative;
+    background-size: 100%;
 }
 .shop-single-data-count button{
     background-color: #f2f2f2;
@@ -658,8 +633,6 @@
 .shop-category{
     display: flex;
     flex-flow: wrap;
-    margin-right:-2px;
-    margin-bottom:-1px
 }
 .shop-category .shop-normal-item{
     width:33.333333%
@@ -679,7 +652,7 @@
     display: block;
 }
 .shop-exchange-item-info .total-rodia{
-    display: none;
+    margin: 10px 16px 0;
 }
 .shop-home-left .b2-pagenav{
     margin-top:0
@@ -702,5 +675,7 @@
 }
 .shop-category-top{
     padding:16px;
-    border-bottom:1px solid #f3f3f3
+}
+.shop-normal-item-price span{
+    font-size: 14px;
 }

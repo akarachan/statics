@@ -1,4 +1,4 @@
-(function($) {
+jQuery(document).ready(function( $ ) {
     tinymce.create('tinymce.plugins.b2_button', {
         init : function(ed, url) {
             
@@ -248,4 +248,4 @@
     });
     /* Start the buttons */
     tinymce.PluginManager.add( 'b2_editor_button', tinymce.plugins.b2_button );
-})(jQuery);
+});

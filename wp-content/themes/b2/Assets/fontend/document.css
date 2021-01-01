@@ -26,7 +26,7 @@
     top: 0;
     opacity: .4;
 }
-.post-type-archive-document #primary-home{
+.post-type-archive-document #primary-home,.page-template-page-document #primary-home{
     margin-top:310px;
     position: relative;
 }
@@ -393,10 +393,10 @@
         padding: 16px 10px;
     }
     
-    .post-type-archive-document.social-top #primary-home{
+    .post-type-archive-document.social-top #primary-home,.page-template-page-document.social-top #primary-home{
         margin-top:170px
     }
-    .post-type-archive-document #primary-home{
+    .post-type-archive-document #primary-home,.page-template-page-document #primary-home{
         margin-top:219px
     }
     .document-cat-item img{

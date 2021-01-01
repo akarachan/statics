@@ -162,28 +162,31 @@
     width: 34rem;
     padding:20px 0 0
 }
+.news-item-date:first-child{
+    font-size: 15px;
+    display: flex;
+    color: red;
+    font-weight: 700;
+}
+.news-item-date:first-child i{
+    margin-right:5px
+}
+.news-item-date:first-child span{
+    margin-right:5px
+}
 .news-item-content > div{
     display: flex;
 }
 .news-item-content p{
-    width:100%;
-    flex:1;
-    line-height: 26px;
-    color: #999;
+    line-height: 22px;
+    color: #525252;
     font-size: 14px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
     overflow: hidden;
     position: relative;
-}
-.news-item-content p a{
-    position: absolute;
-    right: 10px;
-    bottom: 0;
-    background: #fff;
-    padding-left: 20px;
-    font-size: 12px;
+    width:100%
 }
 .news-from{
     font-size: 12px;
@@ -202,7 +205,9 @@
     font-size: 18px;
 }
 .news-item ul{
-    padding:20px 0
+    flex-grow: 1;
+    width: 100%;
+    max-width: 100%;
 }
 .news-item li{
     padding:16px 0;
@@ -212,12 +217,7 @@
     margin-top: 10px;
 }
 .news-item-date{
-    font-size: 12px;
-    font-weight: 700;
-    padding: 16px;
-}
-.news-item-date span{
-    margin-left:5px
+    padding: 20px;
 }
 .news-item-header{
     display: flex;
@@ -239,7 +239,8 @@
     height:20px;
     border-radius: 100%;
     margin-right:5px;
-    border:2px solid #fff
+    border:2px solid #fff;
+    display: block;
 }
 .news-item-header span{
     font-size: 12px;
@@ -331,6 +332,7 @@
     margin-right:16px;
     color:#999;
     cursor: pointer;
+    white-space: nowrap;
 }
 .new-meta-left i{
     vertical-align: -1px;
@@ -349,6 +351,7 @@
 }
 .new-meta-left{
     display: flex;
+    justify-content: flex-start;
 }
 .newsflashes-nav-in button.empty{
     position: absolute;
@@ -385,8 +388,15 @@
     margin:0
 }
 @media screen and (max-width:768px){
+    .news-item{
+        display: block;
+    }
+    .news-item-date span{
+        display: inline-block;
+        margin-right:5px
+    }
     .news-item-date{
-        padding:8px
+        padding:8px 0
     }
     .news-item-header span{
         margin:0 8px

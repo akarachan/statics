@@ -67,7 +67,7 @@ code{
 .menu-item-depth-0 .field-menu_img{
     display: none
 }
-#aliyun-sms,#juhe-sms,#yunpian-sms,#sms-select,#luosimao,#zhongzheng-sms,#tencent-sms{
+#aliyun-sms,#juhe-sms,#yunpian-sms,#sms-select,#luosimao,#zhongzheng-sms,#tencent-sms,#others-sms,#submail-sms{
     display: none
 }
 .sliders-module .cmb2-radio-list li,.posts-module .cmb2-radio-list li{
@@ -387,6 +387,6 @@ p.b2_video_box_desc code{
 #sidebar-2 .is_sticky{
     display: none;
 }
-.sticky-menu #adminmenuwrap{
-    margin-top:0
+#adminmenuwrap{
+    margin-top:0!important
 }

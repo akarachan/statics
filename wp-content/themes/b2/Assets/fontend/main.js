@@ -400,7 +400,8 @@ Vue.component('login-box', {
             repass:false,
             type:'',
             oauth:'',
-            openOauth:false
+            openOauth:false,
+            isWeixin:false
         }
     },
     created(){
@@ -423,6 +424,8 @@ Vue.component('login-box', {
                 this.getOauthData(true)
             }
         }
+
+        this.isWeixin = b2isWeixin()
     },
     methods:{
         close(val){
@@ -1461,6 +1464,7 @@ Vue.component('page-nav',{
                     }
                     if(this.navtype === 'comment'){
                         b2CommentList.showSticky()
+                        b2SidebarSticky()
                     }
                 }else if(this.navtype === 'post'){
                     b2PackeryLoad()
@@ -1475,7 +1479,7 @@ Vue.component('page-nav',{
                 NProgress.done()
                 NProgress.remove()
                 b2SidebarSticky()
-                if(typeof b2CommentList !== 'undefined'){
+                if(typeof b2CommentList !== 'undefined' && b2CommentList.$refs.commentPageNav){
                     b2CommentList.lazyLoadInstance.update()
                 }
                 lazyLoadInstance.update()
@@ -2088,8 +2092,45 @@ var b2DownloadPage = new Vue({
         }
     },
     methods:{
+        test(){
+            let order_id = localStorage.getItem('order_id')
+
+            this.$http.post(b2_rest_url+'payCheck','order_id='+order_id).then(res=>{
+
+                if(res.data.status === 'success'){
+                    if(!userTools.userData.user_link){
+                        let list = JSON.parse(localStorage.getItem('b2_guest_buy_'+res.data.id+'_'+res.data.type));
+
+                        if(!list){
+                            list = new Object()
+                        }
+
+                        Reflect.set(list,res.data.index,{
+                            'id':res.data.id,
+                            'order_id':order_id,
+                            'type':res.data.type,
+                            'index':res.data.index
+                        })
+
+                        localStorage.setItem('b2_guest_buy_'+res.data.id+'_'+res.data.type,JSON.stringify(list))
+                    }
+
+                    //localStorage.removeItem('order_id')
+
+                }
+            })
+        },
         getData(){
-            this.$http.post(b2_rest_url+'getDownloadPageData','post_id='+this.postId+'&index='+this.index+'&i='+this.i).then(res=>{
+            let guest = JSON.parse(localStorage.getItem('b2_guest_buy_'+this.postId+'_x'));
+
+            let data = {
+                'post_id':this.postId,
+                'index':this.index,
+                'i':this.i,
+                'guest':guest
+            }
+
+            this.$http.post(b2_rest_url+'getDownloadPageData',Qs.stringify(data)).then(res=>{
                 this.data = res.data
             }).catch(err=>{
                 this.$toasted.show(err.response.data.message,{
@@ -2134,8 +2175,27 @@ Vue.component('check-box',{
             let order_id = localStorage.getItem('order_id')
 
             this.$http.post(b2_rest_url+'payCheck','order_id='+order_id).then(res=>{
-                if(res.data === 'success'){
-                    console.log(this.payt)
+
+                if(res.data.status === 'success'){
+                    if(!userTools.userData.user_link){
+                        let list = JSON.parse(localStorage.getItem('b2_guest_buy_'+res.data.id+'_'+res.data.type));
+
+                        if(!list){
+                            list = new Object()
+                        }
+
+                        Reflect.set(list,res.data.index,{
+                            'id':res.data.id,
+                            'order_id':order_id,
+                            'type':res.data.type,
+                            'index':res.data.index
+                        })
+
+                        localStorage.setItem('b2_guest_buy_'+res.data.id+'_'+res.data.type,JSON.stringify(list))
+                    }
+
+                    localStorage.removeItem('order_id')
+
                     if(typeof(B2VerifyPage) !== "undefined"){
                         B2VerifyPage.data.money = true
                         this.close()
@@ -2361,9 +2421,28 @@ Vue.component('scan-box',{
             }
             let order_id = localStorage.getItem('order_id')
             this.$http.post(b2_rest_url+'payCheck','order_id='+order_id).then(res=>{
-                if(res.data === 'success'){
+                if(res.data.status === 'success'){
+
+                    if(!userTools.userData.user_link){
+                        let list = JSON.parse(localStorage.getItem('b2_guest_buy_'+res.data.id+'_'+res.data.type));
+
+                        if(!list){
+                            list = new Object()
+                        }
+
+                        Reflect.set(list,res.data.index,{
+                            'id':res.data.id,
+                            'order_id':order_id,
+                            'type':res.data.type,
+                            'index':res.data.index
+                        })
+
+                        localStorage.setItem('b2_guest_buy_'+res.data.id+'_'+res.data.type,JSON.stringify(list))
+                    }
+
                     this.success = true;
                     this.checkTime = null;
+                    localStorage.removeItem('order_id')
                     if(typeof(B2VerifyPage) !== "undefined"){
                         B2VerifyPage.data.money = true
                         this.close()
@@ -2385,13 +2464,6 @@ Vue.component('scan-box',{
                         this.checkAc()
                     },1000)
                 }
-            }).catch(err=>{
-                this.$toasted.show(err.response.data.message,{
-                    theme: 'primary',
-                    position: 'top-center', 
-                    duration : 4000,
-                    type:'error'
-                })
             })
         },
         setTime(){
@@ -2475,15 +2547,21 @@ Vue.component('ds-box', {
             allow:[],
             card:[],
             cg:[],
-            newWin: null
+            newWin: null,
+            login:false
+        }
+    },
+    created(){
+        this.isWeixin = b2isWeixin()
+        let userData = userTools.userData
+        if(userData.user_link){
+            this.login = true
         }
     },
     methods:{
         close(){
-            setTimeout(()=>{
-                this.$emit('close')
-                this.locked = false
-            },10)
+            this.$emit('close')
+            this.locked = false
         },
         clean(){
             this.$emit('clean')
@@ -2535,7 +2613,7 @@ Vue.component('ds-box', {
                 if(this.jump == 'jump' && this.href == '') return true
                 if(this.locked == true) return true
                 if(this.payType == '') return true
-                if(this.payMoney == '') return true
+                if(this.payMoney === '') return true
             }else{
                 if(!this.card.number || !this.card.password) return true
             }
@@ -2559,7 +2637,6 @@ Vue.component('ds-box', {
                     }
                     this.jump = res.data.pay_type
 
-                    this.isWeixin = res.data.is_weixin
                     this.isMobile = res.data.is_mobile
                     if(this.jump == 'jump'){
                         let url = b2_global.pay_url+'?'+Qs.stringify(this.restData())
@@ -2746,7 +2823,7 @@ Vue.component('ds-box', {
                     this.payMoney = 0
                     this.payType = ''
                     this.clean()
-                }, 10);
+                }, 300);
             }
         },
         payType(val){
@@ -2775,10 +2852,8 @@ var b2DsBox = new Vue({
             this.show = !this.show
         },
         clean(){
-            setTimeout(()=>{
-                this.data = []
-                this.money = []
-            },100)
+            this.data = []
+            this.money = []
         },
         change(type){
             this.showtype = type
@@ -2793,30 +2868,19 @@ var b2Ds = new Vue({
     },
     methods:{
         show(){
-            let userData = userTools.userData
-            if(!userData.user_link){
-                login.show = true
-            }else{
-                b2DsBox.money = this.data.moneys
-                b2DsBox.show = true
-                b2DsBox.showtype = 'ds'
-                b2DsBox.msg = this.data.single_post_ds_text
-            }
+            b2DsBox.money = this.data.moneys
+            b2DsBox.show = true
+            b2DsBox.showtype = 'ds'
+            b2DsBox.msg = this.data.single_post_ds_text
         },
     }
 })
 
 function b2pay(event){
-    let userData = userTools.userData
-    if(!userData.user_link){
-        login.show = true
-    }else{
-        let data = JSON.parse(event.getAttribute('data-pay'));
-        b2DsBox.data = data
-        b2DsBox.show = true
-        b2DsBox.showtype = 'normal'
-    }
-    
+    let data = JSON.parse(event.getAttribute('data-pay'));
+    b2DsBox.data = data
+    b2DsBox.show = true
+    b2DsBox.showtype = 'normal'
 }
 
 function b2creditpay(event){
@@ -3313,7 +3377,6 @@ var b2AsideBar = new Vue({
             }
             
             this.updateCarts()
-            
         }
     },
     methods:{
@@ -4170,6 +4233,7 @@ var b2HotCircle = new Vue({
     },
     methods:{
         go(link){
+
             window.location.href = link
         },
         getCirclesList(type){
@@ -4254,27 +4318,35 @@ var b2recommendedCircle = new Vue({
             }
         },
         getCircles(){
+            let ids = JSON.parse(this.$refs.recommendedGujia.getAttribute('data-ids'))
+            if(ids.length == 0) return
             let data = {
-                ids:JSON.parse(this.$refs.recommendedGujia.getAttribute('data-ids'))
+                ids:ids
             }
 
             this.$http.post(b2_rest_url+'getCircleDataByCircleIds',Qs.stringify(data)).then(res=>{
                 this.data = res.data
                 this.$nextTick(()=>{
                     this.$refs.recommendedGujia.style.display = 'none'
-                    this.current = b2CirclePostBox.circle.picked
+                    if(typeof b2CirclePostBox != 'undefined'){
+                        this.current = b2CirclePostBox.circle.picked
+                    }
                 })
             })
         },
-        go(index){
-            if(typeof b2CirclePostBox == 'undefined') return
-            let id = this.data[index].id
-            b2CirclePostBox.circle.picked = id
-            this.current = id
-            b2CircleList.pickedCircle('widget',id)
-            b2CirclePostBox.getCurrentUserCircleData()
-            window.history.pushState(id, this.data[index].name, this.data[index].link)
-            document.title = this.data[index].name+' '+b2_global.site_separator+' '+b2_global.site_name
+        go(even,index){
+            if(typeof b2CirclePostBox != 'undefined'){
+                even.stopPropagation()
+                even.preventDefault()
+                let id = this.data[index].id
+                b2CirclePostBox.circle.picked = id
+                this.current = id
+                b2CircleList.pickedCircle('widget',id)
+                b2CirclePostBox.getCurrentUserCircleData()
+                window.history.pushState(id, this.data[index].name, this.data[index].link)
+                document.title = this.data[index].name+' '+b2_global.site_separator+' '+b2_global.site_name
+                return false
+            }
         }
     }
 })

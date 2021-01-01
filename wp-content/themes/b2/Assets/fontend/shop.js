@@ -23,6 +23,9 @@ var B2ShopHome = new Vue({
             }
             this.$http.post(b2_rest_url+'getShopItemsData',Qs.stringify(ids)).then((res)=>{
                 this.data = res.data
+                this.$nextTick(()=>{
+                    lazyLoadInstance.update()
+                })
             })
         },
         go(url){
@@ -31,8 +34,60 @@ var B2ShopHome = new Vue({
     }
 })
 
-var B2ShopSingle = new Vue({
+function b2shopflickity(){
+    var f = document.querySelector('.shop-cats-list');
+    if(f){
+            let shop = new Flickity(f,{
+                pageDots: false,
+                groupCells: true,
+                draggable: true,
+                prevNextButtons: false,
+                freeScroll: true,
+                wrapAround:true,
+                cellAlign: 'left'
+            });
+            
+            let previous = f.parentNode.querySelector('.shop-previous');
+            previous.addEventListener( 'click', function() {
+                shop.previous();
+            });
+
+            let next = f.parentNode.querySelector('.shop-next');
+            next.addEventListener( 'click', function() {
+                shop.next();
+            });
+        
+    }
+}
+    
+b2shopflickity()
+
+var b2ShopResout = new Vue({
     el:'#shop-single',
+    data:{
+        id:0,
+        resout:{
+            'data':''
+        }
+    },
+    mounted(){
+        if(this.$refs.shopRes){
+            this.id = this.$refs.shopRes.getAttribute('data-id')
+            this.getUserBuyResout()
+        }
+    },
+    methods:{
+        //用户购买信息
+        getUserBuyResout(){
+            this.$http.post(b2_rest_url+'getUserBuyResout','post_id='+this.id).then(res=>{
+                this.resout = res.data
+            })
+        },
+    }
+})
+
+var B2ShopSingle = new Vue({
+    el:'.shop-top-box',
     data:{
         id:0,
         data:'',
@@ -59,10 +114,7 @@ var B2ShopSingle = new Vue({
         f:'=',
         //邮箱信息
         showEmailBox:false,
-        pickedEmail:'',
-        resout:{
-            'data':''
-        }
+        pickedEmail:''
     },
     mounted(){
         if(this.$refs.shopSingle){
@@ -82,7 +134,6 @@ var B2ShopSingle = new Vue({
             if(userData.user_link){
                 this.getAddress()
                 this.getEmail()
-                this.getUserBuyResout()
             }
         }
     },
@@ -208,12 +259,6 @@ var B2ShopSingle = new Vue({
             if(this.data == '') return true
             if(!this.data[id].can_buy.allow) return true
             return false
-        },
-        //用户购买信息
-        getUserBuyResout(){
-            this.$http.post(b2_rest_url+'getUserBuyResout','post_id='+this.id).then(res=>{
-                this.resout = res.data
-            })
         },
         //邮件信息
         showEmail(id){
